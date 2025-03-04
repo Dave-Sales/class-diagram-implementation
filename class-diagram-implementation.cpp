@@ -74,6 +74,34 @@ public:
     }
 };
 
+class Payment {
+public:
+    static void processPayment(double amount) {
+        int paymentMethod;
+        do {
+            cout << "Choose Payment Method:" << endl;
+            cout << "1. Cash" << endl;
+            cout << "2. Gcash" << endl;
+            cout << "Enter choice: ";
+            cin >> paymentMethod;
+
+            if (paymentMethod == 1) {
+            	cout << "===================================="<<endl;
+                cout << "Payment of " << amount << " received in Cash." << endl;
+                cout << "===================================="<<endl;
+                break;
+            } else if (paymentMethod == 2) {
+            	cout << "===================================="<<endl;
+                cout << "Payment of " << amount << " received via Gcash." << endl;
+                cout << "===================================="<<endl;
+                break;
+            } else {
+                cout << "Invalid payment method. Please try again." << endl;
+            }
+        } while (true);
+    }
+};
+
 class Order {
 private:
     Product* orderedProducts[100][100];
@@ -101,12 +129,14 @@ public:
             totalAmounts[totalOrders] += orderedProducts[totalOrders][i]->price * orderQuantities[totalOrders][i];
         }
 
-        totalOrders++;
-        cart.clearCart();
-
         cout << "==============================================="<<endl;
         cout << "You have successfully checked out the products!" << endl;
         cout << "==============================================="<<endl;
+        cout << "Total Amount: " << totalAmounts[totalOrders] << endl;
+        cout << "===================================="<<endl;
+        Payment::processPayment(totalAmounts[totalOrders]);
+        totalOrders++;
+        cart.clearCart();
     }
 
     void viewOrders() {
@@ -151,27 +181,34 @@ int main() {
             }
             string prodID;
             int quantity;
-            cout << "===================================="<<endl;
-            cout << "Enter product ID to add to cart: ";   
-            cin >> prodID;
-            cout << "Enter quantity: ";
-            cin >> quantity;
-            bool found = false;
-            for (int i = 0; i < 3; i++) {
-                if (products[i].productID == prodID) {
-                    cart.addProduct(&products[i], quantity);
-                    found = true;
-                    break;
+            bool found;
+            do {
+                cout << "===================================="<<endl;
+                cout << "Enter product ID to add to cart: ";   
+                cin >> prodID;
+                found = false;
+                for (int i = 0; i < 3; i++) {
+                    if (products[i].productID == prodID) {
+                        cout << "Enter quantity: ";
+                        cin >> quantity;
+                        cart.addProduct(&products[i], quantity);
+                        found = true;
+                        break;
+                    }
                 }
-            }
-            if (!found) {
-                cout << "Invalid ID!" << endl;
-            }
+                if (!found) {
+                	cout << "===================================="<<endl;
+                    cout << "Invalid ID! Please try again." << endl;
+                }
+            } while (!found);
         } else if (choice == 2) {
             cart.viewCart();
             char checkoutChoice;
-            cout << "Do you want to check out? (Y/N): ";
-            cin >> checkoutChoice;
+            do {
+            	cout << "===================================="<<endl;
+                cout << "Do you want to check out? (Y/N): ";
+                cin >> checkoutChoice;
+            } while (checkoutChoice != 'Y' && checkoutChoice != 'y' && checkoutChoice != 'N' && checkoutChoice != 'n');
             if (checkoutChoice == 'Y' || checkoutChoice == 'y') {
                 order.checkout(cart);
             }
